@@ -415,6 +415,9 @@ function(llvm_add_library name)
   elseif(ARG_SHARED)
     add_windows_version_resource_file(ALL_FILES ${ALL_FILES})
     add_library(${name} SHARED ${ALL_FILES})
+
+    llvm_setup_rpath(${name})
+
   else()
     add_library(${name} STATIC ${ALL_FILES})
   endif()
@@ -629,7 +632,7 @@ endmacro(add_llvm_loadable_module name)
 
 
 macro(add_llvm_executable name)
-  cmake_parse_arguments(ARG "DISABLE_LLVM_LINK_LLVM_DYLIB;IGNORE_EXTERNALIZE_DEBUGINFO" "" "" ${ARGN})
+  cmake_parse_arguments(ARG "DISABLE_LLVM_LINK_LLVM_DYLIB;IGNORE_EXTERNALIZE_DEBUGINFO;NO_INSTALL_RPATH" "" "" ${ARGN})
   llvm_process_sources( ALL_FILES ${ARG_UNPARSED_ARGUMENTS} )
 
   # Generate objlib
@@ -657,6 +660,10 @@ macro(add_llvm_executable name)
     add_executable(${name} EXCLUDE_FROM_ALL ${ALL_FILES})
   else()
     add_executable(${name} ${ALL_FILES})
+  endif()
+
+  if(NOT ARG_NO_INSTALL_RPATH)
+    llvm_setup_rpath(${name})
   endif()
 
   if(DEFINED windows_resource_file)
@@ -985,7 +992,7 @@ function(add_unittest test_suite test_name)
   set(LLVM_REQUIRES_RTTI OFF)
 
   list(APPEND LLVM_LINK_COMPONENTS Support) # gtest needs it for raw_ostream
-  add_llvm_executable(${test_name} IGNORE_EXTERNALIZE_DEBUGINFO ${ARGN})
+  add_llvm_executable(${test_name} IGNORE_EXTERNALIZE_DEBUGINFO NO_INSTALL_RPATH ${ARGN})
   set(outdir ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
   set_output_directory(${test_name} BINARY_DIR ${outdir} LIBRARY_DIR ${outdir})
   # libpthreads overrides some standard library symbols, so main
@@ -1315,5 +1322,39 @@ function(llvm_externalize_debuginfo name)
       )
   else()
     message(FATAL_ERROR "LLVM_EXTERNALIZE_DEBUGINFO isn't implemented for non-darwin platforms!")
+  endif()
+endfunction()
+
+function(llvm_setup_rpath name)
+  if(LLVM_INSTALL_PREFIX AND NOT (LLVM_INSTALL_PREFIX STREQUAL CMAKE_INSTALL_PREFIX))
+    set(extra_libdir ${LLVM_LIBRARY_DIR})
+  elseif(LLVM_BUILD_LIBRARY_DIR)
+    set(extra_libdir ${LLVM_LIBRARY_DIR})
+  endif()
+
+  if (APPLE)
+    set(_install_name_dir INSTALL_NAME_DIR "@rpath")
+    set(_install_rpath "@loader_path/../lib" ${extra_libdir})
+  elseif(UNIX)
+    if(NOT DEFINED CMAKE_INSTALL_RPATH)
+      set(_install_rpath "\$ORIGIN/../lib${LLVM_LIBDIR_SUFFIX}" ${extra_libdir})
+      if(${CMAKE_SYSTEM_NAME} MATCHES "(FreeBSD|DragonFly)")
+        set_property(TARGET ${name} APPEND_STRING PROPERTY
+                     LINK_FLAGS " -Wl,-z,origin ")
+      elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT LLVM_LINKER_IS_GOLD)
+        # $ORIGIN is not interpreted at link time by ld.bfd
+        set_property(TARGET ${name} APPEND_STRING PROPERTY
+                     LINK_FLAGS " -Wl,-rpath-link,${LLVM_LIBRARY_OUTPUT_INTDIR} ")
+      endif()
+    endif()
+  else()
+    return()
+  endif()
+
+  if(DEFINED _install_rpath)
+    set_target_properties(${name} PROPERTIES
+                          BUILD_WITH_INSTALL_RPATH On
+                          INSTALL_RPATH "${_install_rpath}"
+                          ${_install_name_dir})
   endif()
 endfunction()
