@@ -14,7 +14,7 @@
 #include "NeoRegisterInfo.h"
 #include "Neo.h"
 //#include "SparcMachineFunctionInfo.h"
-//#include "SparcSubtarget.h"
+#include "NeoSubtarget.h"
 #include "llvm/ADT/BitVector.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/CodeGen/MachineFrameInfo.h"
