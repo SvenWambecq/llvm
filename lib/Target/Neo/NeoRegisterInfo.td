@@ -32,6 +32,6 @@ foreach I = 0-15 in
 foreach I = 0-5 in
   def MP#I : MPi<I, "mp"#I>;
 
-def DataRegs : RegisterClass<"Neo", [i16, i32], 32, (sequence "R%u", 0, 15)>;
-def PtrRegs: RegisterClass<"Neo", [i16, i32], 32, (sequence "MP%u", 0, 5)>;
+def DataRegs : RegisterClass<"Neo", [i32], 32, (sequence "R%u", 0, 15)>;
+def PtrRegs: RegisterClass<"Neo", [i32], 32, (sequence "MP%u", 0, 5)>;
 

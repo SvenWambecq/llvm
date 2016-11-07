@@ -20,9 +20,9 @@ include "llvm/Target/Target.td"
 // NEO Subtarget features.
 //
 
-def FeatureXS
-  : SubtargetFeature<"XS", "IsXS", "true",
-                     "Enable nEO XS instructions">;
+//def FeatureXS
+//  : SubtargetFeature<"XS", "IsXS", "true",
+//                     "Enable Neo XS instructions">;
 
 
 //===----------------------------------------------------------------------===//

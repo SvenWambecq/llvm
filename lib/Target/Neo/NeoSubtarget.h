@@ -33,7 +33,7 @@ class NeoSubtarget : public NeoGenSubtargetInfo {
   Triple TargetTriple;
   virtual void anchor();
 
-  //SparcInstrInfo InstrInfo;
+  //NeoInstrInfo InstrInfo;
   //SparcTargetLowering TLInfo;
   //SelectionDAGTargetInfo TSInfo;
   //SparcFrameLowering FrameLowering;
@@ -43,12 +43,12 @@ public:
                  const std::string &FS, const TargetMachine &TM, bool is64bit);
 
   //const NeoInstrInfo *getInstrInfo() const override { return &InstrInfo; }
-  const TargetFrameLowering *getFrameLowering() const override {
-    return &FrameLowering;
-  }
-  const NeoRegisterInfo *getRegisterInfo() const override {
-    return &InstrInfo.getRegisterInfo();
-  }
+  //const TargetFrameLowering *getFrameLowering() const override {
+  //  return &FrameLowering;
+  //}
+  //const NeoRegisterInfo *getRegisterInfo() const override {
+  //  return &InstrInfo.getRegisterInfo();
+ // }
   /*const NeoTargetLowering *getTargetLowering() const override {
     return &TLInfo;
   }
