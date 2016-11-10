@@ -39,9 +39,8 @@ NeoSubtarget &NeoSubtarget::initializeSubtargetDependencies(StringRef CPU,
 }
 
 NeoSubtarget::NeoSubtarget(const Triple &TT, const std::string &CPU,
-                               const std::string &FS, const TargetMachine &TM,
-                               bool is64Bit)
-    : NeoGenSubtargetInfo(TT, CPU, FS), TargetTriple(TT), Is64Bit(is64Bit),
+                               const std::string &FS, const TargetMachine &TM)
+    : NeoGenSubtargetInfo(TT, CPU, FS), TargetTriple(TT), 
       InstrInfo(initializeSubtargetDependencies(CPU, FS)), TLInfo(TM, *this),
       FrameLowering(*this) {}
 

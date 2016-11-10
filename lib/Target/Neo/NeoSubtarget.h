@@ -14,9 +14,9 @@
 #ifndef LLVM_LIB_TARGET_NEO_NEOSUBTARGET_H
 #define LLVM_LIB_TARGET_NEO_NEOSUBTARGET_H
 
-//#include "NeoFrameLowering.h"
-//#include "NeoISelLowering.h"
-//#include "NeoInstrInfo.h"
+#include "NeoFrameLowering.h"
+#include "NeoISelLowering.h"
+#include "NeoInstrInfo.h"
 #include "llvm/CodeGen/SelectionDAGTargetInfo.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/Target/TargetFrameLowering.h"
@@ -33,14 +33,14 @@ class NeoSubtarget : public NeoGenSubtargetInfo {
   Triple TargetTriple;
   virtual void anchor();
 
-  //NeoInstrInfo InstrInfo;
-  //SparcTargetLowering TLInfo;
-  //SelectionDAGTargetInfo TSInfo;
-  //SparcFrameLowering FrameLowering;
+  NeoInstrInfo InstrInfo;
+  NeoTargetLowering TLInfo;
+  SelectionDAGTargetInfo TSInfo;
+  NeoFrameLowering FrameLowering;
 
 public:
   NeoSubtarget(const Triple &TT, const std::string &CPU,
-                 const std::string &FS, const TargetMachine &TM, bool is64bit);
+                 const std::string &FS, const TargetMachine &TM);
 
   //const NeoInstrInfo *getInstrInfo() const override { return &InstrInfo; }
   //const TargetFrameLowering *getFrameLowering() const override {
