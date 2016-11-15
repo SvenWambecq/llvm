@@ -4106,10 +4106,11 @@ SDValue AArch64TargetLowering::LowerSELECT_CC(ISD::CondCode CC, SDValue LHS,
       ConstantFPSDNode *CTVal = dyn_cast<ConstantFPSDNode>(TVal);
 
       if ((CC == ISD::SETEQ || CC == ISD::SETOEQ || CC == ISD::SETUEQ) &&
-          CTVal && CTVal->isZero())
+          CTVal && CTVal->isZero() && TVal.getValueType() == LHS.getValueType())
         TVal = LHS;
       else if ((CC == ISD::SETNE || CC == ISD::SETONE || CC == ISD::SETUNE) &&
-               CFVal && CFVal->isZero())
+               CFVal && CFVal->isZero() &&
+               FVal.getValueType() == LHS.getValueType())
         FVal = LHS;
     }
   }
@@ -4780,6 +4781,8 @@ AArch64TargetLowering::getRegForInlineAsmConstraint(
         return std::make_pair(0U, &AArch64::GPR64commonRegClass);
       return std::make_pair(0U, &AArch64::GPR32commonRegClass);
     case 'w':
+      if (VT.getSizeInBits() == 16)
+        return std::make_pair(0U, &AArch64::FPR16RegClass);
       if (VT.getSizeInBits() == 32)
         return std::make_pair(0U, &AArch64::FPR32RegClass);
       if (VT.getSizeInBits() == 64)

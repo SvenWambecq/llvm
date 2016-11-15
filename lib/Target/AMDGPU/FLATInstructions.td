@@ -392,7 +392,7 @@ def : FlatAtomicPat <FLAT_ATOMIC_XOR_X2_RTN, atomic_xor_global, i64>;
 } // End Predicates = [isCIVI]
 
 let Predicates = [isVI] in {
-  def : FlatStorePat <FLAT_STORE_SHORT, flat_truncstorei8, i16>;
+  def : FlatStorePat <FLAT_STORE_BYTE, flat_truncstorei8, i16>;
   def : FlatStorePat <FLAT_STORE_SHORT, flat_store, i16>;
 }
 

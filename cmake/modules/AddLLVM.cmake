@@ -584,10 +584,16 @@ macro(add_llvm_library name)
         set(install_type ARCHIVE)
       endif()
 
+      if(${name} IN_LIST LLVM_DISTRIBUTION_COMPONENTS OR
+          NOT LLVM_DISTRIBUTION_COMPONENTS)
+        set(export_to_llvmexports EXPORT LLVMExports)
+        set_property(GLOBAL PROPERTY LLVM_HAS_EXPORTS True)
+      endif()
+
       install(TARGETS ${name}
-            EXPORT LLVMExports
-            ${install_type} DESTINATION ${install_dir}
-            COMPONENT ${name})
+              ${export_to_llvmexports}
+              ${install_type} DESTINATION ${install_dir}
+              COMPONENT ${name})
 
       if (NOT CMAKE_CONFIGURATION_TYPES)
         add_custom_target(install-${name}
@@ -618,10 +624,17 @@ macro(add_llvm_loadable_module name)
         else()
           set(dlldir "lib${LLVM_LIBDIR_SUFFIX}")
         endif()
+
+        if(${name} IN_LIST LLVM_DISTRIBUTION_COMPONENTS OR
+            NOT LLVM_DISTRIBUTION_COMPONENTS)
+          set(export_to_llvmexports EXPORT LLVMExports)
+          set_property(GLOBAL PROPERTY LLVM_HAS_EXPORTS True)
+        endif()
+
         install(TARGETS ${name}
-          EXPORT LLVMExports
-          LIBRARY DESTINATION ${dlldir}
-          ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX})
+                ${export_to_llvmexports}
+                LIBRARY DESTINATION ${dlldir}
+                ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX})
       endif()
       set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
     endif()
@@ -797,8 +810,14 @@ macro(add_llvm_tool name)
 
   if ( ${name} IN_LIST LLVM_TOOLCHAIN_TOOLS OR NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     if( LLVM_BUILD_TOOLS )
+      if(${name} IN_LIST LLVM_DISTRIBUTION_COMPONENTS OR
+          NOT LLVM_DISTRIBUTION_COMPONENTS)
+        set(export_to_llvmexports EXPORT LLVMExports)
+        set_property(GLOBAL PROPERTY LLVM_HAS_EXPORTS True)
+      endif()
+
       install(TARGETS ${name}
-              EXPORT LLVMExports
+              ${export_to_llvmexports}
               RUNTIME DESTINATION ${LLVM_TOOLS_INSTALL_DIR}
               COMPONENT ${name})
 
@@ -1326,6 +1345,10 @@ function(llvm_externalize_debuginfo name)
 endfunction()
 
 function(llvm_setup_rpath name)
+  if(CMAKE_INSTALL_RPATH)
+    return()
+  endif()
+
   if(LLVM_INSTALL_PREFIX AND NOT (LLVM_INSTALL_PREFIX STREQUAL CMAKE_INSTALL_PREFIX))
     set(extra_libdir ${LLVM_LIBRARY_DIR})
   elseif(LLVM_BUILD_LIBRARY_DIR)
@@ -1336,25 +1359,21 @@ function(llvm_setup_rpath name)
     set(_install_name_dir INSTALL_NAME_DIR "@rpath")
     set(_install_rpath "@loader_path/../lib" ${extra_libdir})
   elseif(UNIX)
-    if(NOT DEFINED CMAKE_INSTALL_RPATH)
-      set(_install_rpath "\$ORIGIN/../lib${LLVM_LIBDIR_SUFFIX}" ${extra_libdir})
-      if(${CMAKE_SYSTEM_NAME} MATCHES "(FreeBSD|DragonFly)")
-        set_property(TARGET ${name} APPEND_STRING PROPERTY
-                     LINK_FLAGS " -Wl,-z,origin ")
-      elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT LLVM_LINKER_IS_GOLD)
-        # $ORIGIN is not interpreted at link time by ld.bfd
-        set_property(TARGET ${name} APPEND_STRING PROPERTY
-                     LINK_FLAGS " -Wl,-rpath-link,${LLVM_LIBRARY_OUTPUT_INTDIR} ")
-      endif()
+    set(_install_rpath "\$ORIGIN/../lib${LLVM_LIBDIR_SUFFIX}" ${extra_libdir})
+    if(${CMAKE_SYSTEM_NAME} MATCHES "(FreeBSD|DragonFly)")
+      set_property(TARGET ${name} APPEND_STRING PROPERTY
+                   LINK_FLAGS " -Wl,-z,origin ")
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND NOT LLVM_LINKER_IS_GOLD)
+      # $ORIGIN is not interpreted at link time by ld.bfd
+      set_property(TARGET ${name} APPEND_STRING PROPERTY
+                   LINK_FLAGS " -Wl,-rpath-link,${LLVM_LIBRARY_OUTPUT_INTDIR} ")
     endif()
   else()
     return()
   endif()
 
-  if(DEFINED _install_rpath)
-    set_target_properties(${name} PROPERTIES
-                          BUILD_WITH_INSTALL_RPATH On
-                          INSTALL_RPATH "${_install_rpath}"
-                          ${_install_name_dir})
-  endif()
+  set_target_properties(${name} PROPERTIES
+                        BUILD_WITH_INSTALL_RPATH On
+                        INSTALL_RPATH "${_install_rpath}"
+                        ${_install_name_dir})
 endfunction()
