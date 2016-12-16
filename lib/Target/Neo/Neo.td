@@ -32,7 +32,7 @@ include "llvm/Target/Target.td"
 include "NeoRegisterInfo.td"
 //include "NeoCallingConv.td"
 //include "NeoSchedule.td"
-//include "NeoInstrInfo.td"
+include "NeoInstrInfo.td"
 
 def NeoInstrInfo : InstrInfo;
 
