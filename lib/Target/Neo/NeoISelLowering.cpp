@@ -13,7 +13,6 @@
 //===----------------------------------------------------------------------===//
 
 #include "NeoISelLowering.h"
-#include "MCTargetDesc/SparcMCExpr.h"
 #include "NeoMachineFunctionInfo.h"
 #include "NeoRegisterInfo.h"
 #include "NeoTargetMachine.h"

@@ -34,7 +34,7 @@ class NeoSubtarget : public NeoGenSubtargetInfo {
   virtual void anchor();
 
   NeoInstrInfo InstrInfo;
-  NeoTargetLowering TLInfo;
+  //NeoTargetLowering TLInfo;
   SelectionDAGTargetInfo TSInfo;
   NeoFrameLowering FrameLowering;
 

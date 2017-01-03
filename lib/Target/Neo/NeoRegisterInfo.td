@@ -34,4 +34,3 @@ foreach I = 0-5 in
 
 def DataRegs : RegisterClass<"Neo", [i32], 32, (sequence "R%u", 0, 15)>;
 def PtrRegs: RegisterClass<"Neo", [i32], 32, (sequence "MP%u", 0, 5)>;
-
