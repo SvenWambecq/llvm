@@ -32,5 +32,5 @@ using namespace llvm;
 void NeoInstrInfo::anchor() {}
 
 NeoInstrInfo::NeoInstrInfo(NeoSubtarget &ST)
-    : NeoGenInstrInfo(SP::ADJCALLSTACKDOWN, SP::ADJCALLSTACKUP), RI(),
+    : NeoGenInstrInfo(), RI(),
       Subtarget(ST) {}

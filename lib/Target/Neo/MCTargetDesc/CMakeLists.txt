@@ -1,0 +1,9 @@
+add_llvm_library(LLVMNeoDesc
+  #NeoAsmBackend.cpp
+  #NeoELFObjectWriter.cpp
+  #NeoMCAsmInfo.cpp
+  #NeoMCCodeEmitter.cpp
+  NeoMCTargetDesc.cpp
+  #NeoMCExpr.cpp
+  #NeoTargetStreamer.cpp
+  )

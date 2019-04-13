@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "Neo.h"
+#include "../Neo.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Support/TargetRegistry.h"
 using namespace llvm;
@@ -23,8 +23,6 @@ Target &llvm::getTheNeoXSTarget() {
 
 
 extern "C" void LLVMInitializeNeoTargetInfo() {
-  RegisterTarget<Triple::neo, /*HasJIT=*/false> X(getTheNeoTarget(), "neo",
-                                                   "Neo");
-  RegisterTarget<Triple::neoxs, /*HasJIT=*/false> Y(getTheNeoXSTarget(),
-                                                     "neoxs", "NEO XS");
+  RegisterTarget<> X(getTheNeoTarget(), "neo", "Neo");
+  RegisterTarget<> Y(getTheNeoXSTarget(), "neoxs", "NEO XS");
 }

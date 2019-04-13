@@ -19,7 +19,13 @@
 #include "llvm/Target/TargetLowering.h"
 
 namespace llvm {
+    class NeoSubtarget; 
 
+    class NeoTargetLowering : public TargetLowering {
+      const NeoSubtarget *Subtarget;
+    public:
+      NeoTargetLowering(const TargetMachine &TM, const NeoSubtarget &STI);
+  };
 }
 
 #endif    // NEO_ISELLOWERING_H

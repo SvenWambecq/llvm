@@ -15,18 +15,19 @@
 #ifndef LLVM_LIB_TARGET_NEO_NEO_H
 #define LLVM_LIB_TARGET_NEO_NEO_H
 
+#include "MCTargetDesc/NeoMCTargetDesc.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Target/TargetMachine.h"
 
 namespace llvm {
   class FunctionPass;
-  class SparcTargetMachine;
+  class NeoTargetMachine;
   class formatted_raw_ostream;
   class AsmPrinter;
   class MCInst;
   class MachineInstr;
 
-  //FunctionPass *createNeoISelDag(SparcTargetMachine &TM);
+  FunctionPass *createNeoISelDag(NeoTargetMachine &TM);
   //FunctionPass *createNeoDelaySlotFillerPass(TargetMachine &TM);
 
   //void LowerNeoMachineInstrToMCInst(const MachineInstr *MI,

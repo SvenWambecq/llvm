@@ -303,7 +303,6 @@ set(LLVM_ALL_TARGETS
   Lanai
   Mips
   MSP430
-  Neo
   NVPTX
   PowerPC
   RISCV
